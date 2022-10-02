@@ -1,8 +1,6 @@
 package com.asacoa.loaraidweb.controller;
 
-import com.asacoa.loaraidweb.dao.RaidDao;
 import com.asacoa.loaraidweb.service.RaidService;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +18,8 @@ public class JdaController {
     // url : https://localhost:8080/jda/api/raid/guild/{guildId}
     @GetMapping("/api/raid/guild/{guildId}")
     @ResponseBody
-    public String getGuildAllRaids(@PathVariable String guildId) {
-        return raidService.getGuildAllRaids(guildId);
+    public String getGuildAllRaids(@PathVariable String guildId) throws Exception {
+        return raidService.getAllRaids(guildId).toString();
     }
 
 }

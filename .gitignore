@@ -1,6 +1,8 @@
 #.ide
 build/
 .gradle/
+.idea/
+src/test/
 
 
 # Compiled class file

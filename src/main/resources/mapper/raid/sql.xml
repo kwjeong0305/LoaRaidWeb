@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asacoa.loaraidweb.mapper.RaidMapper">
+    <select id="selectAllRaids" parameterType="String" resultType="com.asacoa.loaraidweb.dto.RaidDto">
+        <![CDATA[
+        SELECT raid_id,
+               guild_id,
+               raid_type,
+               raid_members
+        FROM raid
+        ]]>
+        <where>
+            guild_id = #{guildId}
+        </where>
+    </select>
+
+    <insert id="insertRaid" parameterType="String">
+    <![CDATA[
+        INSERT INTO raid
+            (raid_id, guild_id, raid_type, raid_members)
+        VALUES (#{raidId}, #{guildId}, #{raidType}, #{raidMembers})
+        ]]>
+    </insert>
+
+    <update id="updateRaid" parameterType="String">
+    <![CDATA[
+        UPDATE raid
+        SET raid_members = #{raidMembers}
+        WHERE raid_id = #{raidId}
+        ]]>
+    </update>
+
+    <delete id="deleteRaid" parameterType="String">
+    <![CDATA[
+        DELETE
+        FROM raid
+        WHERE raid_id = #{raidId}
+        ]]>
+    </delete>
+</mapper>
