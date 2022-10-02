@@ -1,6 +1,6 @@
 package com.asacoa.loaraidweb.mapper;
 
-import com.asacoa.loaraidweb.dto.RaidDto;
+import com.asacoa.loaraidweb.data.RaidDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

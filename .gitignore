@@ -1,9 +1,8 @@
-#.ide
 build/
 .gradle/
 .idea/
+src/main/resources/static/
 src/test/
-
 
 # Compiled class file
 *.class

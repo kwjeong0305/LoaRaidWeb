@@ -1,10 +1,10 @@
-package com.asacoa.loaraidweb.dto;
+package com.asacoa.loaraidweb.data;
 
 import lombok.Data;
 
 @Data
 public class RaidDto {
-    private int raid_id;
+    private String raid_id;
     private String guild_id;
     private String raid_type;
     private String raid_members;

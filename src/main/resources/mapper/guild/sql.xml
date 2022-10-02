@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.asacoa.loaraidweb.mapper.RaidMapper">
-    <select id="selectGuild" parameterType="String" resultType="com.asacoa.loaraidweb.dto.RaidDto">
+    <select id="selectGuild" parameterType="String" resultType="com.asacoa.loaraidweb.data.RaidDto">
         <![CDATA[
         SELECT
             guild_id,

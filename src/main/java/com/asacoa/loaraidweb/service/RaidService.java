@@ -1,7 +1,8 @@
 package com.asacoa.loaraidweb.service;
 
-import com.asacoa.loaraidweb.dto.RaidDto;
+import com.asacoa.loaraidweb.data.RaidDto;
 import com.asacoa.loaraidweb.mapper.RaidMapper;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,23 +14,32 @@ public class RaidService {
     @Autowired
     private RaidMapper raidMapper;
 
-    public RaidService(RaidMapper raidMapper) {
-        this.raidMapper = raidMapper;
+    public JSONObject getAllRaids(String guildId) throws Exception {
+
+        List<RaidDto> raidList = raidMapper.selectAllRaids(guildId);
+
+        JSONObject jsonObject = new JSONObject();
+
+        if(raidList.size() > 0) {
+            jsonObject.put("result", "success");
+            jsonObject.put("data", raidList);
+        } else {
+            jsonObject.put("result", "fail");
+            jsonObject.put("data", "no data");
+        }
+
+        return jsonObject;
     }
 
-    public List<RaidDto> getAllRaids(String guildId) throws Exception {
-        return raidMapper.selectAllRaids(guildId);
+    public void createRaid(RaidDto raidDto) throws Exception {
+        raidMapper.insertRaid(raidDto);
     }
 
-    public void createRaid(RaidDto raidDto) {
-
+    public void saveRaid(RaidDto raidDto) throws Exception {
+        raidMapper.updateRaid(raidDto);
     }
 
-    public void saveRaid(RaidDto raidDto) {
-
-    }
-
-    public void deleteRaid(RaidDto raidDto) {
-
+    public void deleteRaid(RaidDto raidDto) throws Exception {
+        raidMapper.deleteRaid(raidDto);
     }
 }
