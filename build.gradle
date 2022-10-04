@@ -41,7 +41,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'org.json', name: 'json', version: '20220320'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
-    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 }
 
 /**
@@ -61,26 +60,25 @@ node {
      * false: 전역으로 설치된 Node.js 사용함.
      */
 //    download = true
-    download = false
+    download = true
 
     /**
      * download가 true일 경우에만 사용
      * version에 명시한 버전으로 Node.js 다운로드 및 설치
      * workDir에 설치됨
      */
-//    version = "14.17.6"
+    version = "16.17.1"
 
     /**
      * 사용할 npm 버전을 지정하면 npmWorkDir에 설치됨
      * npm 버전을 지정하지 않으면 Node.js에 번들로 제공되는 npm 버전으로 사용됨
      */
-//    npmVersion = "6.14.15"
 
     /**
      * download가 true일 경우에만 사용
      * Node.js 배포를 가져오기 위한 기본 URL
      */
-//    distBaseUrl = "https://nodejs.org/dist"
+    distBaseUrl = "https://nodejs.org/dist"
 
     /**
      * npmInstall 작업에 의해 실행되는 npm 명령
@@ -92,12 +90,12 @@ node {
      * download가 true일 경우에만 사용
      * Node.js가 압축 해제된 디렉토리
      */
-//    workDir = file("${project.projectDir}/.gradle/nodejs")
+    workDir = file("${project.projectDir}/.gradle/nodejs")
 
     /**
      * npm이 설치된 디렉토리 (특정 버전이 정의된 경우)
      */
-//    npmWorkDir = file("${project.projectDir}/.gradle/npm")
+    npmWorkDir = file("${project.projectDir}/.gradle/npm")
 
     /**
      * vue 프로젝트 디렉토리 위치
@@ -117,8 +115,16 @@ node {
  * deleteVueBuildFiles task는 빌드 결과물을 제거하기 위하여 별도 만든 task이고,
  * npmInstall task는 node plugin에서 제공하는 task입니다.
  */
-task npmBuild(type: NpmTask, dependsOn: ['npmInstall']) {
-    args = ["run", "build"]
+task setUp(type: NpmTask) {
+    description = "Install Node.js Packages"
+    args = ['install']
 }
 
-processResources.dependsOn 'npmBuild'
+task buildFrontEnd(type: NpmTask, dependsOn: setUp)
+{
+    description = "build Vue"
+    args = ['run', 'build']
+}
+
+
+processResources.dependsOn 'buildFrontEnd'
