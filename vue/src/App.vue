@@ -13,27 +13,6 @@ export default {
     };
   },
   methods: {
-    get() {
-      $.ajax({
-          url: "http://localhost:8080/api/raid/guild/1",
-          type: "GET",
-          dataType: "json",
-          data: '',
-          success: function (data) {
-            // jsonobject to string
-            var json = JSON.stringify(data);
-            alert(json);
-          },
-          error: function (data) {
-            // jsonobject to string
-            var json = JSON.stringify(data);
-            alert(json);
-          }
-          ,
-        }
-      )
-      ;
-    },
     mounted() {
       this.get();
     }
@@ -45,12 +24,73 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@font-face {
+  font-family: 'Noto Sans KR';
+  src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap') format('swap');
+  font-weight: 400;
+  font-style: normal;
+}
+
+html, body {
+  font-family: 'Noto Sans KR', sans-serif;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.nav-container {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 8%;
+  left: 0;
+  right: 0;
+  padding: 0;
+  margin: 0;
+  background-color: aqua;
+  display: flex;
+  /* 생략 */
+}
+
+.nav-container div {
+  padding: 10px;
+  margin: 0;
+  float: left;
+  background-color: #333;
+}
+
+.nav-container span {
+  padding: 10px;
+  margin: 0 0 0 0;
+  float: left;
+  align-content: center;
+}
+
+.nav-container .logo {
+  margin: 0 0 0 auto;
+  width: 12%;
+  align-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #FFF;
+}
+
+.nav-container .nav-item{
+  margin: 0 0 0 auto;
+  width: 80%;
+  align-content: center;
+  font-size: 15px;
+  font-weight: bold;
+  color: #FFF;
+}
+
+.nav-container .github {
+  margin: 0 0 0 auto;
+  width: 8%;
+  align-content: center;
+  font-size: 15px;
+  font-weight: bold;
+  color: #FFF;
 }
 </style>
