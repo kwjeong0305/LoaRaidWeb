@@ -2,10 +2,23 @@
   <div id="RaidList">
     <div class="container-raid">
       <div class="container-card container-raid-add">
-        <select @change="change">
-          <option v-for="item in raidTypeList" :value="item.value">{{ item.name }}</option>
+        <select @change="raidTypeChange">
+          <option v-for="item in raidList" :value="item.order">{{ item.name }}</option>
         </select>
-        <button class="btn-raid-add" @click="addRaid">추가</button>
+
+        <!--        <button class="btn btn-raid-add" @click="addRaid">추가</button>-->
+
+        <div class="container-difficulty" v-if="selectedRaid">
+          <label v-for="(item, i) in raidData.raidDifficulty">
+            <input class="input-radio input-radio-difficulty" type="radio" name="difficulty"
+                   :value="item">{{ item }}
+          </label>
+        </div>
+
+        <input class="input-text input-text-member" type="text" v-if="selectedRaid" v-for="i in raidData.maxMember"
+               :id="'member'+i"
+               v-on:change="loaApi"
+               v-model="raidData.raidMember[i-1]">
       </div>
       <div class="container-card container-raid-list">
         <span>
@@ -21,27 +34,53 @@ export default {
   name: 'RaidList',
   data() {
     return {
-      raidTypeList: [
-        {'name': '선택', 'value': ''},
-        {'name': '도비스도디언', 'value': '1'},
-        {'name': '쿠크세이튼', 'value': '2'},
-        {'name': '아브렐슈드', 'value': '3'},
-        {'name': '일리아칸', 'value': '4'}
+      raidList: [
+        {'name': '선택', 'order': '0'},
+        {'name': '도비스도디언', 'order': '1', 'maxMember': 4},
+        {'name': '쿠크세이튼', 'order': '2', 'maxMember': 4, 'difficulty': ['노말']},
+        {'name': '아브렐슈드', 'order': '3', 'maxMember': 8, 'difficulty': ['노말', '하드']},
+        {'name': '일리아칸', 'order': '4', 'maxMember': 8, 'difficulty': ['노말', '하드']}
       ],
-      ajaxData: {
-        raidType: ''
-      }
+      raidData: {
+        raidType: '',
+        raidDifficulty: [],
+        maxMember: 0,
+        raidMember: []
+      },
+      selectedRaid: false,
     }
   },
   methods: {
-    change(event) {
-      this.ajaxData.raidType = event.target.value;
+    raidTypeChange(event) {
+      const val = event.target.value;
+      this.selectedRaid = false;
+      if (val !== '') {
+        this.raidData.raidType = this.raidList[val].name;
+        this.raidData.maxMember = this.raidList[val].maxMember;
+        this.raidData.raidDifficulty = this.raidList[val].difficulty;
+        this.selectedRaid = true;
+        console.log(this.raidData.raidDifficulty);
+      } else {
+        this.selectedRaid = false;
+      }
+
     },
     addRaid() {
       $.ajax({
-          url: 'http://localhost:8090/raid',
+          url: 'http://localhost:8081/raid',
           type: 'POST',
           data: this.ajaxData,
+          success: function (data) {
+            console.log(data);
+          },
+        }
+      )
+    },
+    loaApi() {
+      $.ajax({
+          url: 'http://localhost:8081/api/loa/charter',
+          type: 'POST',
+          data: {member: this.raidMember[0]},
           success: function (data) {
             console.log(data);
           },
@@ -87,4 +126,5 @@ export default {
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   align-items: start;
 }
+
 </style>
