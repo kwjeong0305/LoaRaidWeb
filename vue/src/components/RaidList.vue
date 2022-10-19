@@ -130,9 +130,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+#RaidList {
+
+}
+
 .container-raid {
   display: grid;
-  grid-template-columns: 22fr 78fr;
+  grid-template-columns: 3fr 7fr;
   /*grid-template-rows: 1fr 1fr 1fr;*/
   grid-template-rows: repeat(1, minmax(200px, auto));
   gap: 10px;
