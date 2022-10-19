@@ -10,14 +10,14 @@
         </div>
         <div class="container-raid-list">
           <div class="container-raid-type" v-for="type in Object.keys(raidData)">
-            <h3>{{type}}</h3>
+            <h3>{{ type }}</h3>
             <div class="container-raid-item" v-for="item in raidData[type]">
-                {{item.id}}
-               {{item.difficulty}}
-               {{item.members}}
-<!--                  <span>{{item.id}}</span>-->
-<!--                  <span>{{item.difficulty}}</span>-->
-<!--                  <span>{{item.members}}</span>-->
+              {{ item.id }}
+              {{ item.difficulty }}
+              {{ item.members }}
+              <!--                  <span>{{item.id}}</span>-->
+              <!--                  <span>{{item.difficulty}}</span>-->
+              <!--                  <span>{{item.members}}</span>-->
 
               <!--              <div class="container-raid-element-members">-->
               <!--                <div class="container-raid-element-member" v-for="member in item.members">-->
@@ -80,8 +80,7 @@ export default {
 
     };
   },
-  methods: {
-  }
+  methods: {}
 }
 </script>
 <style>

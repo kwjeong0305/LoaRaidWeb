@@ -41,7 +41,7 @@ export default {
   font-style: normal;
 }
 
-#app{
+#app {
   font-family: 'Noto Sans KR', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
