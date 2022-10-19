@@ -65,7 +65,6 @@ html, body {
   width: 100%;
   height: 60px;
   background-color: #b5d692;
-
 }
 
 ::-webkit-scrollbar {
@@ -92,5 +91,4 @@ html, body {
   font-weight: bold;
   font-size: 20px;
 }
-
 </style>
