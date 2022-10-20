@@ -24,9 +24,6 @@ export default {
   name: 'App',
   methods: {
     // eslint-disable-next-line no-console
-    log() {
-      console.log('clicked');
-    }
   }
 }
 
@@ -53,8 +50,8 @@ export default {
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: #fafafa;
   overflow: hidden;
 }
@@ -69,24 +66,6 @@ html, body {
 
 body::-webkit-scrollbar {
   display: none;
-}
-
-.scroll::-webkit-scrollbar {
-  width: 8px;  /* 스크롤바의 너비 */
-  height: 8px;
-  background-color: transparent;
-}
-
-.scroll::-webkit-scrollbar-thumb {
-  width: 8px;
-  height: 8px; /* 스크롤바의 길이 */
-  background: #b0b4bb; /* 스크롤바의 색상 */
-
-  border-radius: 4px;
-}
-
-.scroll::-webkit-scrollbar-track {
-  background: #f3f4f5;  /*스크롤바 뒷 배경 색상*/
 }
 
 .nav-container {

@@ -1,5 +1,5 @@
 <template>
-  <div id="RaidList">
+  <div id="RaidList" class="scroll">
     <div class="div-containerCard raid-add">
       <div class="div-containerItem raid-add-btn">
         <button class="btn-positive" @click="insertRaidApi">추가</button>
@@ -180,6 +180,31 @@ export default {
 }
 </script>
 <style>
+#RaidList {
+  width: 100%;
+  height: 90vh;
+  overflow-y: scroll;
+
+}
+
+.scroll::-webkit-scrollbar {
+  width: 8px;  /* 스크롤바의 너비 */
+  height: 8px;
+  background-color: transparent;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  width: 8px;
+  height: 4px; /* 스크롤바의 길이 */
+  background: #b0b4bb; /* 스크롤바의 색상 */
+
+  border-radius: 4px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  background: #f3f4f5;  /*스크롤바 뒷 배경 색상*/
+}
+
 .div-containerCard {
   margin: 20px;
   padding: 20px;
@@ -192,6 +217,7 @@ export default {
 
 .raid-add {
   width: 16%;
+  min-width: 320px;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
@@ -200,22 +226,22 @@ export default {
 }
 
 .raid-list {
-  padding: 20px 0 20px 20px !important;
+  padding: 20px 0 0 20px !important;
 }
 
 .raid-list-ul {
+  margin: 20px 20px 20px 20px;
   height: 480px;
   overflow-y: scroll;
-}
-
-.raid-add, .raid-list {
-
 }
 
 .div-containerItem {
   margin: 5px;
   vertical-align: middle;
   text-align: left;
+}
+.raid-add-btn {
+  margin-bottom: 10px;
 }
 
 .raid-add-members {
