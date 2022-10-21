@@ -1,44 +1,43 @@
 <template>
   <div id="RaidList" class="scroll">
     <div class="div-containerCard raid-add">
-      <div class="div-containerItem raid-add-btn">
-        <button class="btn-positive" @click="insertRaidApi">추가</button>
-      </div>
-      <div class="div-containerItem raid-add-type">
-        <select @change="changeSelect" v-model="raidSendData.raidType">
+      <div class="div-containerItem raid-add-type raid-add-btn">
+        <select @change="typeChange" v-model="raidAddSendData.raidType">
           <option v-for="id in Object.keys(raidList)"
                   :value="id">{{ id }}
           </option>
         </select>
+        <button class="btn-positive" @click="raidInsertApi">추가</button>
       </div>
-      <div class="div-containerItem raid-add-difficulty" v-if="raidSendData.raidType !== ''">
-        <label v-for="item in raidList[raidSendData.raidType].difficulty">
+      <div class="div-containerItem raid-add-difficulty" v-if="raidAddSendData.raidType !== ''">
+        <label class="label-raid-add" v-for="item in raidList[raidAddSendData.raidType].difficulty">
           <input class="input-radio input-radio-difficulty" type="radio" name="difficulty"
                  :value="item.id"
-                 v-model="raidSendData.raidDifficulty">
+                 v-model="raidAddSendData.raidDifficulty">
           <span>{{ item.name }}</span>
         </label>
       </div>
       <div class="div-containerItem raid-add-members">
         <input class="input-text input-text-member" type="text" placeholder="공격대원을 입력해 주세요."
-               v-on:change="loaApi"
-               v-for="i in raidList[raidSendData.raidType].maxMember"
+               v-on:change="charterApi"
+               v-for="i in raidList[raidAddSendData.raidType].maxMember"
                :id="i-1"
-               v-model="raidSendData.raidMembers[i-1]">
+               v-model="raidAddSendData.raidMembers[i-1]">
       </div>
     </div>
 
     <div class="div-containerCard raid-list">
       <div class="div-containerItem raid-list-btn">
-        <button class="btn-negative" @click="isModalViewed = true">레이드 삭제</button>
+        <button class="btn-negative" @click="raidDeleteApi">레이드 삭제</button>
       </div>
       <div class="div-containerItem raid-list-ul scroll">
-        <ul v-for="type in Object.keys(raidResultData)">
+        <ul v-for="type in Object.keys(raidListResultData)">
           {{ type }}
-          <li class="div-raid-item raid-list-item" v-for="(item, i) in raidResultData[type]">
-            <input type="hidden" :value="item.id" :id="item.id">
-            파티{{ i + 1 }} {{ item.members }}
-          </li>
+            <li :id="'id'+item.id" class="div-raid-item raid-list-li" :class="{selected:item.id === selectedId}"
+                @click="raidListSelected(item.id)" v-for="(item, i) in raidListResultData[type]">
+              <input :id="'id'+item.id" class="check-box-raid-list" type="checkbox" @click="raidListChecked">
+              <span v-for="(member, i) in item.members">{{ member }} </span>
+            </li>
         </ul>
       </div>
     </div>
@@ -49,10 +48,10 @@
 
 export default {
   name: 'RaidList',
-  components: {
-  },
+  components: {},
   data() {
     return {
+      selectedId: undefined,
       isModalViewed: false,
       raidList: {
         "도비스도디언": {
@@ -81,54 +80,80 @@ export default {
           ]
         }
       },
-      raidSendData: {
+      raidAddSendData: {
         raidType: "도비스도디언",
         raidDifficulty: "",
         raidMembers: []
       },
-      raidResultData: {
+      raidListSendData: [],
+      raidListResultData: {
         "도비스도디언": [
-          {"id": "30010203", "members": "1,2,3,4,5,6"},
-          {"id": "30010201", "members": "1,2,32"},
-          {"id": "30010204", "members": "13"}
+          {
+            "id": "1",
+            "members": ["가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타"]
+          },
+          {"id": "2", "members": "1,2,32"},
+          {"id": "3", "members": "13"}
         ],
         "쿠쿠세이튼-노말": [
-          {"id": "30010203", "members": "1,2,3,4,5,6"},
-          {"id": "30010201", "members": "1,2,32"},
-          {"id": "30010204", "members": "13"}
+          {"id": "4", "members": "1,2,3,4,5,6"},
+          {"id": "5", "members": "1,2,32"},
+          {"id": "6", "members": "13"}
         ],
         "아브렐슈드-노말": [
-          {"id": "30010203", "members": "1,2,3,4,5,6"},
-          {"id": "30010201", "members": "1,2,32"},
-          {"id": "30010204", "members": "13"}
+          {"id": "7", "members": "1,2,3,4,5,6"},
+          {"id": "8", "members": "1,2,32"},
+          {"id": "9", "members": "13"}
         ],
         "아브렐슈드-하드": [
-          {"id": "30010203", "members": "1,2,3,4,5,6"},
-          {"id": "30010201", "members": "1,2,32"},
-          {"id": "30010204", "members": "13"}
+          {"id": "10", "members": "1,2,3,4,5,6"},
+          {"id": "11", "members": "1,2,32"},
+          {"id": "12", "members": "13"}
         ],
         "일리아칸-노말": [
-          {"id": "30010203", "members": "1,2,3,4,5,6"},
-          {"id": "30010201", "members": "1,2,32"},
-          {"id": "30010204", "members": "13"}
+          {"id": "13", "members": "1,2,3,4,5,6"},
+          {"id": "14", "members": "1,2,32"},
+          {"id": "15", "members": "13"}
         ],
         "일리아칸-하드": [
-          {"id": "30010203", "members": "1,2,3,4,5,6"},
-          {"id": "30010201", "members": "1,2,32"},
-          {"id": "30010204", "members": "13"}
+          {"id": "16", "members": "1,2,3,4,5,6"},
+          {"id": "17", "members": "1,2,32"},
+          {"id": "18", "members": "13"}
         ]
       }
     };
   },
   methods: {
-    changeSelect(event) {
-      if (event.target.value === "도비스도디언") {
-        this.raidSendData.raidDifficulty = "";
-        this.raidSendData.raidMembers = this.raidSendData.raidMembers.slice(0, 4);
+    raidListSelected(id) {
+      if(this.selectedId === id) {
+        this.selectedId = undefined;
+      } else {
+        this.selectedId = id;
       }
     },
-    insertRaidApi(event) {
-      function checkRaidData(data) {
+    // 레이드 삭제를 위한 데이터를 담는 함수
+    raidListChecked() {
+      const isChecked = $("#id" + this.selectedId).find("input").is(":checked");
+
+      if (isChecked) {
+        // ID 추가
+        this.raidListSendData.push(this.selectedId);
+      } else {
+        // ID 삭제
+        this.raidListSendData.splice(this.raidListSendData.indexOf(this.selectedId), 1);
+      }
+    },
+    // raidType 변경시 특정 타입일 경우 raidAddSendData 데이터 초기화
+    typeChange(event) {
+      if (event.target.value === "도비스도디언") {
+        this.raidAddSendData.raidDifficulty = "";
+        this.raidAddSendData.raidMembers = this.raidAddSendData.raidMembers.slice(0, 4);
+      }
+    },
+    // 추가 버튼 클릭시 API호출 함수
+    raidInsertApi(event) {
+      // Invalid Check
+      function invalidRaidData(data) {
         // 난이도가 선택되지 않을 경우(raidType 0인경우는 제외)
         if (data.raidDifficulty === "" && data.raidType !== "도비스도디언") {
           alert("난이도를 선택해 주세요.");
@@ -148,28 +173,38 @@ export default {
         }
       }
 
-      // DB에 등록을 하기 위한 API
-      if (checkRaidData(this.raidSendData)) {
+      // RaidInsert API 호출
+      if (invalidRaidData(this.raidAddSendData)) {
         alert("등록되었습니다.");
         $.ajax({
-            url: "http://localhost:8081/raid",
+            url: "http://localhost:8081/api/raid/insert",
             type: "POST",
-            data: this.raidSendData,
+            data: this.raidAddSendData,
             success: function (data) {
               console.log(data);
-              event.$emit("close-modal");
             },
           }
         );
       }
     },
-    // 캐릭터 조회를 위한 API
-    loaApi(event) {
-      console.log(event.target.value)
+    raidDeleteApi() {
+      // RaidDelete API 호출
+      $.ajax({
+        url: "http://localhost:8081/api/raid/delete",
+        type: "POST",
+        data: this.raidListSendData,
+        success: function (data) {
+          console.log(data);
+        },
+      });
+    },
+    // Charter조회 API호출
+    charterApi(event) {
+      console.log(event.target)
       $.ajax({
           url: "http://localhost:8081/api/loa/charter",
           type: "POST",
-          data: {member: this.raidSendData.raidMembers[event.target.id - 1]},
+          data: {member: this.raidAddSendData.raidMembers[event.target.id - 1]},
           success: function (data) {
             console.log(data);
           }
@@ -188,7 +223,7 @@ export default {
 }
 
 .scroll::-webkit-scrollbar {
-  width: 8px;  /* 스크롤바의 너비 */
+  width: 8px; /* 스크롤바의 너비 */
   height: 8px;
   background-color: transparent;
 }
@@ -202,7 +237,7 @@ export default {
 }
 
 .scroll::-webkit-scrollbar-track {
-  background: #f3f4f5;  /*스크롤바 뒷 배경 색상*/
+  background: #f3f4f5; /*스크롤바 뒷 배경 색상*/
 }
 
 .div-containerCard {
@@ -226,12 +261,14 @@ export default {
 }
 
 .raid-list {
+  width: 78vmax;
   padding: 20px 0 0 20px !important;
 }
 
 .raid-list-ul {
-  margin: 20px 20px 20px 20px;
-  height: 480px;
+  margin: 20px 0 0 20px !important;
+  padding: 0 0 20px 0 !important;
+  height: 440px;
   overflow-y: scroll;
 }
 
@@ -240,17 +277,14 @@ export default {
   vertical-align: middle;
   text-align: left;
 }
-.raid-add-btn {
-  margin-bottom: 10px;
-}
 
 .raid-add-members {
   margin: 0.6em 0 0 0;
 }
 
-.raid-add-btn {
-  text-align: right;
-  left: 0;
+.raid-add-btn > button {
+  text-align: right !important;
+  right: 0 !important;
   bottom: 0;
 }
 
@@ -278,7 +312,7 @@ select:focus {
   background-color: #ffffff;
 }
 
-label {
+label.label-raid-add {
   font-size: 18px;
   display: inline-block;
 }
@@ -329,7 +363,7 @@ span {
   box-sizing: border-box;
 }
 
-input[type="text"] {
+.input-text-member {
   margin: 0 0 8px 0;
   width: 100%;
   height: 32px;
@@ -342,11 +376,38 @@ input[type="text"] {
 }
 
 .raid-list-ul > ul {
-  padding: 10px 10px;
+  margin: 0 20px 20px 0;
+  padding: 0;
   background-color: white;
-  border-radius: 1.0em;
   text-align: left;
   position: relative;
   list-style-position: inside;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+ul li, ol li {
+  padding: 5px 0 5px 5px;
+  border-bottom: 1px solid #efefef;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+ul li:before,
+ol li:before {
+  content: ">";
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0 5px 6px 0;
+}
+
+ul li.selected {
+  background-color: #BDBDBD;
 }
 </style>
