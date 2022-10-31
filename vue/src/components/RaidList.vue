@@ -28,16 +28,21 @@
 
     <div class="div-containerCard raid-list">
       <div class="div-containerItem raid-list-btn">
-        <button class="btn-negative" @click="raidDeleteApi">레이드 삭제</button>
+        <button id="UpdateBtn" class="btn-neutral btn-disable" @click="raidUpdateApi">레이드 수정</button>
+        <button id="DeleteBtn" class="btn-negative btn-disable" @click="raidDeleteApi">레이드 삭제</button>
       </div>
       <div class="div-containerItem raid-list-ul scroll">
         <ul v-for="type in Object.keys(raidListResultData)">
           {{ type }}
-            <li :id="'id'+item.id" class="div-raid-item raid-list-li" :class="{selected:item.id === selectedId}"
-                @click="raidListSelected(item.id)" v-for="(item, i) in raidListResultData[type]">
-              <input :id="'id'+item.id" class="check-box-raid-list" type="checkbox" @click="raidListChecked">
-              <span v-for="(member, i) in item.members">{{ member }} </span>
-            </li>
+          <li :id="'id'+item.id"
+              class="div-raid-item raid-list-li"
+              :class="{selected:item.id === selectedId}"
+              @click="raidListSelected(item.id)"
+              v-for="(item, i) in raidListResultData[type]">
+
+            <input :id="'id'+item.id" class="check-box-raid-list" type="checkbox" @click="raidListChecked(item.id)">
+            <span v-for="(member, i) in item.members">{{ member }} </span>
+          </li>
         </ul>
       </div>
     </div>
@@ -45,7 +50,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'RaidList',
   components: {},
@@ -78,21 +82,32 @@ export default {
             {"id": "normal", "name": "노말"},
             {"id": "hard", "name": "하드"}
           ]
+        },
+        "카양겔": {
+          "name": "카양겔",
+          "maxMember": 4,
+          "difficulty": [
+            {"id": "normal", "name": "노말"},
+            {"id": "hard1", "name": "하드1"},
+            {"id": "hard2", "name": "하드2"},
+            {"id": "hard3", "name": "하드3"}
+          ]
         }
+
       },
       raidAddSendData: {
         raidType: "도비스도디언",
         raidDifficulty: "",
         raidMembers: []
       },
-      raidListSendData: [],
+      raidListDeleteSendData: [],
       raidListResultData: {
         "도비스도디언": [
           {
             "id": "1",
             "members": ["가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타"]
           },
-          {"id": "2", "members": "1,2,32"},
+          {"id": "2", "members": [1, 2, 32]},
           {"id": "3", "members": "13"}
         ],
         "쿠쿠세이튼-노말": [
@@ -124,23 +139,32 @@ export default {
     };
   },
   methods: {
+    raidUpdateApi(id) {
+      console.log(id);
+    },
     raidListSelected(id) {
-      if(this.selectedId === id) {
-        this.selectedId = undefined;
+      this.selectedId = id;
+      if (this.selectedId) {
+        $('#UpdateBtn').removeClass('btn-disable');
       } else {
-        this.selectedId = id;
+        $('#UpdateBtn').addClass('btn-disable');
       }
     },
-    // 레이드 삭제를 위한 데이터를 담는 함수
-    raidListChecked() {
-      const isChecked = $("#id" + this.selectedId).find("input").is(":checked");
-
+    // 레이드 체크박스 선택 시 함수
+    raidListChecked(val) {
+      const isChecked = $("#id" + val).find("input").is(":checked");
       if (isChecked) {
         // ID 추가
-        this.raidListSendData.push(this.selectedId);
+        this.raidListDeleteSendData.push(val);
       } else {
         // ID 삭제
-        this.raidListSendData.splice(this.raidListSendData.indexOf(this.selectedId), 1);
+        this.raidListDeleteSendData.splice(this.raidListDeleteSendData.indexOf(val), 1);
+      }
+
+      if (this.raidListDeleteSendData.length > 0) {
+        $('#DeleteBtn').removeClass('btn-disable');
+      } else {
+        $('#DeleteBtn').addClass('btn-disable');
       }
     },
     // raidType 변경시 특정 타입일 경우 raidAddSendData 데이터 초기화
@@ -151,7 +175,7 @@ export default {
       }
     },
     // 추가 버튼 클릭시 API호출 함수
-    raidInsertApi(event) {
+    raidInsertApi() {
       // Invalid Check
       function invalidRaidData(data) {
         // 난이도가 선택되지 않을 경우(raidType 0인경우는 제외)
@@ -276,6 +300,11 @@ export default {
   margin: 5px;
   vertical-align: middle;
   text-align: left;
+}
+
+.raid-list-btn {
+  text-align: right;
+  margin: 0 20px 20px 0;
 }
 
 .raid-add-members {
@@ -409,5 +438,10 @@ ol li:before {
 
 ul li.selected {
   background-color: #BDBDBD;
+}
+
+.btn-disable {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 </style>
