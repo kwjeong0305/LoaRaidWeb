@@ -29,9 +29,10 @@
 
     <div class="div-containerCard raid-list">
       <div class="div-containerItem raid-list-btn">
-        <button id="UpdateBtn" class="btn-neutral btn-disable" @click="OpenUpdateModal">레이드 수정</button>
+        <button id="UpdateBtn" class="btn-neutral btn-disable" @click="isModalViewed = true">레이드 수정</button>
         <button id="DeleteBtn" class="btn-negative btn-disable" @click="raidDeleteApi">레이드 삭제</button>
       </div>
+
       <div class="div-containerItem raid-list-ul scroll">
         <ul v-for="type in Object.keys(raidResultData)">
           {{ type }}
@@ -39,8 +40,10 @@
               :id="'id'+item.id"
               class="div-raid-item raid-list-li"
               :class="{selected:item.id === selectedId}"
-              @click="raidUpdateSelected(item.id, type, item.difficulty, item.members)">
-            <input :id="'id'+item.id" class="check-box-raid-list" type="checkbox" @click="raidDeleteChecked(item.id)">
+              @click="raidUpdateSelected(item.id, type, item.difficulty.id, item.members)">
+            <input :id="'id'+item.id" class="check-box-raid-list check-box-delete" type="checkbox"
+                   @click="raidDeleteChecked(item.id)">
+            <span v-if="item.difficulty.id !== undefined">{{ '[' + item.difficulty.name + ']' }}</span>
             <span v-for="(member, i) in item.members">{{ member }} </span>
           </li>
         </ul>
@@ -67,6 +70,7 @@ export default {
         "도비스도디언": {
           "name": "도비스도디언",
           "maxMember": 4,
+          "difficulty": []
         },
         "쿠크세이튼": {
           "name": "쿠크세이튼",
@@ -121,48 +125,41 @@ export default {
         "도비스도디언": [
           {
             "id": "1",
-            "difficulty": "normal",
-            "members": ["가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타"]
+            "difficulty": {},
+            "members": ["가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타"]
           },
+          {"id": "2", "difficulty": {}, "members": [1, 2, 3, 4]},
+          {"id": "3", "difficulty": {}, "members": [4, 3, 2, 1]}
+        ],
+        "쿠크세이튼": [
+          {"id": "4", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 3, 4]},
+          {"id": "5", "difficulty": {"id": "normal", "name": "노말"}, "members": [4, 3, 2, 1]},
+          {"id": "6", "difficulty": {"id": "normal", "name": "노말"}, "members": [11, 22, 33, 44]}
+        ],
+        "아브렐슈드": [
           {
-            "id": "2",
-            "difficulty": "normal",
-            "members": [1, 2, 32]
+            "id": "7",
+            "difficulty": {"id": {"id": "normal", "name": "노말"}, "name": "노말"},
+            "members": [1, 2, 3, 4, 5, 6]
           },
-          {"id": "3", "difficulty": "normal", "members": "13"}
+          {"id": "8", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 32]},
+          {"id": "9", "difficulty": {"id": "normal", "name": "노말"}, "members": [13]},
+          {"id": "10", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 3, 4, 5, 6]},
+          {"id": "11", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 32]},
+          {"id": "12", "difficulty": {"id": "hard", "name": "하드"}, "members": [13, 2, 3, 54, 6, 6]}
         ],
-        "쿠쿠세이튼-노말": [
-          {"id": "4", "difficulty": "normal", "members": "1,2,3,4,5,6"},
-          {"id": "5", "difficulty": "normal", "members": "1,2,32"},
-          {"id": "6", "difficulty": "normal", "members": "13"}
-        ],
-        "아브렐슈드-노말": [
-          {"id": "7", "difficulty": "normal", "members": "1,2,3,4,5,6"},
-          {"id": "8", "difficulty": "normal", "members": "1,2,32"},
-          {"id": "9", "difficulty": "normal", "members": "13"}
-        ],
-        "아브렐슈드-하드": [
-          {"id": "10", "difficulty": "hard", "members": "1,2,3,4,5,6"},
-          {"id": "11", "difficulty": "hard", "members": "1,2,32"},
-          {"id": "12", "difficulty": "hard", "members": "13"}
-        ],
-        "일리아칸-노말": [
-          {"id": "13", "difficulty": "normal", "members": "1,2,3,4,5,6"},
-          {"id": "14", "difficulty": "normal", "members": "1,2,32"},
-          {"id": "15", "difficulty": "normal", "members": "13"}
-        ],
-        "일리아칸-하드": [
-          {"id": "16", "difficulty": "hard", "members": "1,2,3,4,5,6"},
-          {"id": "17", "difficulty": "hard", "members": "1,2,32"},
-          {"id": "18", "difficulty": "hard", "members": "13"}
+        "일리아칸": [
+          {"id": "13", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 3, 4, 5, 6]},
+          {"id": "14", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 32]},
+          {"id": "15", "difficulty": {"id": "normal", "name": "노말"}, "members": [13]},
+          {"id": "16", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 3, 4, 5, 6]},
+          {"id": "17", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 32]},
+          {"id": "18", "difficulty": {"id": "hard", "name": "하드"}, "members": [13]}
         ]
       }
     };
   },
   methods: {
-    OpenUpdateModal() {
-      this.isModalViewed = true;
-    },
     raidUpdateSelected(id, type, difficulty, members) {
       this.selectedId = id;
       this.raidUpdateData.raidId = id;
@@ -177,17 +174,8 @@ export default {
       }
     },
     // 레이드 체크박스 선택 시 함수
-    raidDeleteChecked(val) {
-      const isChecked = $("#id" + val).find("input").is(":checked");
-      if (isChecked) {
-        // ID 추가
-        this.raidDeleteData.push(val);
-      } else {
-        // ID 삭제
-        this.raidDeleteData.splice(this.raidDeleteData.indexOf(val), 1);
-      }
-
-      if (this.raidDeleteData.length > 0) {
+    raidDeleteChecked() {
+      if ($('.check-box-delete').is(":checked")) {
         $('#DeleteBtn').removeClass('btn-disable');
       } else {
         $('#DeleteBtn').addClass('btn-disable');
