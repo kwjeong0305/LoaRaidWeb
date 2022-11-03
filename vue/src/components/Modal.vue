@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <div class="overlay"></div>
+    <div class="overlay" @click="$emit('closeModal')"></div>
     <div class="modal-card">
       <slot />
     </div>
@@ -31,7 +31,7 @@ export default {
 
 .modal-card {
   position: relative;
-  max-width: 40%;
+  max-width: 20%;
   margin: 30px auto auto;
   padding: 20px;
   background-color: white;
