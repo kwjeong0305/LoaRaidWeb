@@ -10,14 +10,13 @@
       <label class="label-raid-add" v-for="item in raidList[raidUpdateData.raidType].difficulty">
         <input id="" class="input-radio input-radio-difficulty" type="radio" name="difficulty"
                :value="item.id"
-                :checked="raidData.raidDifficulty==item.id"
+               :checked="raidUpdateData.raidDifficulty==item.id"
                v-model="raidUpdateData.raidDifficulty">
         <span>{{ item.name }}</span>
       </label>
     </div>
     <div class="div-containerItem raid-add-members">
       <input class="input-text input-text-member" type="text" placeholder="공격대원을 입력해 주세요."
-             v-on:change="charterApi"
              v-for="i in raidList[raidUpdateData.raidType].maxMember"
              :id="i-1"
              v-model="raidUpdateData.raidMembers[i-1]">
@@ -44,7 +43,7 @@ export default {
     },
     raidUpdateApi() {
       $.ajax({
-        url: "http://localhost:8080/raid/update",
+        url: "http://localhost:8080/api/raid/update",
         type: "POST",
         data: JSON.stringify(this.raidUpdateData),
         contentType: "application/json",
@@ -55,10 +54,16 @@ export default {
           console.log(data);
         }
       });
-    },
-    charterApi() {
-      console.log('Call API charterApi');
-    },
+    },    // raidType 변경시 특정 타입일 경우 raidAddSendData 데이터 초기화
+    typeChange(event) {
+      if (event.target.value == "도비스도디언") {
+        this.raidUpdateData.raidDifficulty = "";
+        this.raidUpdateData.raidMembers = this.raidUpdateData.raidMembers.slice(0, 4);
+      }
+    }
+    /*    charterApi() {
+          console.log('Call API charterApi');
+        },*/
   },
 }
 </script>
