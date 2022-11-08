@@ -14,7 +14,7 @@ public class RaidService {
     @Autowired
     private RaidMapper raidMapper;
 
-    public JSONObject getAllRaids(String guildId) throws Exception {
+    public JSONObject getAllRaids(Long guildId) throws Exception {
 
         List<RaidDto> raidList = raidMapper.selectAllRaids(guildId);
 

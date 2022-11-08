@@ -9,11 +9,11 @@ import java.util.List;
 @Mapper
 @Repository
 public interface RaidMapper {
-    List<RaidDto> selectAllRaids(String guildId) throws Exception;
+    public List<RaidDto> selectAllRaids(Long guildId) throws Exception;
 
-    void insertRaid(RaidDto raidDto) throws Exception;
+    public int insertRaid(RaidDto raidDto) throws Exception;
 
-    void updateRaid(RaidDto raidDto) throws Exception;
+    public int updateRaid(RaidDto raidDto) throws Exception;
 
-    void deleteRaid(RaidDto raidDto) throws Exception;
+    public int deleteRaid(RaidDto raidDto) throws Exception;
 }

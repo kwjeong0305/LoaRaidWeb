@@ -19,15 +19,17 @@
     <insert id="insertRaid" parameterType="String">
     <![CDATA[
         INSERT INTO raid
-            (raid_id, guild_id, raid_type, raid_members)
-        VALUES (#{raidId}, #{guildId}, #{raidType}, #{raidMembers})
+            (raid_id, guild_id, raid_reg_date,raid_type, raid_difficulty,raid_members)
+        VALUES (#{raidId}, #{guildId}, DATE_FORMAT(now(), '%Y%m%d%H%i%s'),#{raidType}, #{raidDifficulty}, #{raidMembers})
         ]]>
     </insert>
 
     <update id="updateRaid" parameterType="String">
     <![CDATA[
         UPDATE raid
-        SET raid_members = #{raidMembers}
+        SET raid_type = #{raidType},
+            raid_difficulty = #{raidDifficulty},
+            raid_members = #{raidMembers}
         WHERE raid_id = #{raidId}
         ]]>
     </update>

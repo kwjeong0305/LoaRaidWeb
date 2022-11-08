@@ -222,7 +222,7 @@ export default {
       if (invalidRaidData(this.raidInsertData)) {
         alert("등록되었습니다.");
         $.ajax({
-            url: "http://localhost:8081/api/raid/insert",
+            url: "/api/raid/insert",
             type: "POST",
             data: this.raidInsertData,
             success: function (data) {
@@ -235,7 +235,7 @@ export default {
     raidDeleteApi() {
       // RaidDelete API 호출
       $.ajax({
-        url: "http://localhost:8081/api/raid/delete",
+        url: "/api/raid/delete",
         type: "POST",
         data: this.raidDeleteData,
         success: function (data) {

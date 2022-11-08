@@ -43,7 +43,7 @@ export default {
     },
     raidUpdateApi() {
       $.ajax({
-        url: "http://localhost:8080/api/raid/update",
+        url: "/api/raid/update",
         type: "POST",
         data: JSON.stringify(this.raidUpdateData),
         contentType: "application/json",
