@@ -1,17 +1,18 @@
 <template>
   <div id="RaidList" class="scroll">
     <Modal v-if="isModalViewed" @closeModal="isModalViewed = false">
-      <UpdateRaid :raidData="raidUpdateData" :raidList="raidList"/>
+      <UpdateRaid :raidData="raidUpdateData" :raidList="raidList" :is-modal-viewed="isModalViewed"/>
     </Modal>
     <div class="div-containerCard raid-add">
       <div class="div-containerItem raid-add-type raid-add-btn">
         <select @change="typeChange" v-model="raidInsertData.raidType">
-          <option v-for="id in Object.keys(raidList)" :value="id">{{ id }}</option>
+          <option v-for="id in bossList" :value="id">{{ id }}</option>
         </select>
         <button class="btn-positive" @click="raidInsertApi">추가</button>
       </div>
-      <div class="div-containerItem raid-add-difficulty" v-if="raidInsertData.raidType != ''">
-        <label class="label-raid-add" v-for="item in raidList[raidInsertData.raidType].difficulty">
+      <div class="div-containerItem raid-add-difficulty"
+           v-if="raidInsertData.raidType != '도비스도디언'">
+        <label class="label-raid-add" v-for="(item, i) in raidList[raidInsertData.raidType].difficulty">
           <input class="input-radio input-radio-difficulty" type="radio" name="difficulty"
                  :value="item.id"
                  v-model="raidInsertData.raidDifficulty">
@@ -32,17 +33,20 @@
         <button id="DeleteBtn" class="btn-negative btn-disable" @click="raidDeleteApi">레이드 삭제</button>
       </div>
       <div class="div-containerItem raid-list-ul scroll">
-        <ul v-for="type in Object.keys(raidResultData)">
-          {{ type }}
-          <li v-for="item in raidResultData[type]"
-              :id="'id'+item.id"
-              class="div-raid-item raid-list-li"
-              :class="{selected:item.id == selectedId}"
-              @click="raidUpdateSelected(item.id, type, item.difficulty.id, item.members)">
-            <input :id="'id'+item.id" class="check-box-raid-list" type="checkbox" @click="raidDeleteChecked(item.id)">
-            <span v-for="member in item.members">{{ member }} </span>
-          </li>
+        <ul v-for="(type, i) in raidResultData">
+          <span>{{ Object.keys(type)[0] }}</span>
+          <div v-for="items in type">
+            <li v-for="item in items"
+                :id="'id'+item.id"
+                class="div-raid-item raid-list-li"
+                :class="{selected:item.id == selectedId}"
+                @click="raidUpdateSelected(item.id, Object.keys(type)[0], item.difficulty, item.members)">
+              <input :id="'id'+item.id" class="check-box-raid-list" type="checkbox" @click="raidDeleteChecked(item.id)">
+              <span v-for="member in item.members">{{ member }} </span>
+            </li>
+          </div>
         </ul>
+
       </div>
     </div>
   </div>
@@ -51,6 +55,7 @@
 <script>
 import Modal from "./Modal";
 import UpdateRaid from "./UpdateRaid";
+import Vue from "vue";
 
 export default {
   name: 'RaidList',
@@ -58,52 +63,17 @@ export default {
     Modal,
     UpdateRaid
   },
+  created() {
+    this.bossSelectApi();
+  },
   data() {
     return {
       selectedId: undefined,
       isModalViewed: false,
-      raidList: {
-        "도비스도디언": {
-          "name": "도비스도디언",
-          "maxMember": 4,
-        },
-        "쿠크세이튼": {
-          "name": "쿠크세이튼",
-          "maxMember": 4,
-          "difficulty": [{"id": "normal", "name": "노말"}]
-        },
-        "아브렐슈드": {
-          "name": "아브렐슈드",
-          "maxMember": 8,
-          "difficulty": [
-            {"id": "normal", "name": "노말"},
-            {"id": "hard", "name": "하드"}
-          ]
-        },
-        "일리아칸": {
-          "name": "일리아칸",
-          "maxMember": 8,
-          "difficulty": [
-            {"id": "normal", "name": "노말"},
-            {"id": "hard", "name": "하드"}
-          ]
-        },
-        "카양겔": {
-          "name": "카양겔",
-          "maxMember": 4,
-          "difficulty": [
-            {"id": "normal", "name": "노말"},
-            {"id": "hard1", "name": "하드1"},
-            {"id": "hard2", "name": "하드2"},
-            {"id": "hard3", "name": "하드3"}
-          ]
-        }
-
-      },
       // 레이드 타입, 난이도, 공격대원
       raidInsertData: {
         raidType: "도비스도디언",
-        raidDifficulty: "",
+        raidDifficulty: "none",
         raidMembers: []
       },
       // 레이드 ID, 레이드 타입, 난이도, 공격대원
@@ -115,54 +85,24 @@ export default {
       },
       // 레이드 ID 삭제전용
       raidDeleteData: [],
-      // 레이드 타입, 난이도, 공격대원
-      raidResultData: {
-        "도비스도디언": [
-          {
-            "id": "1",
-            "difficulty": {"id": '', "name": ''},
-            "members": ["가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타"]
-          },
-          {"id": "2", "difficulty": {"id": '', "name": ''}, "members": [1, 2, 3, 4]},
-          {"id": "3", "difficulty": {"id": '', "name": ''}, "members": [4, 3, 2, 1]}
-        ],
-        "쿠크세이튼": [
-          {"id": "4", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 3, 4]},
-          {"id": "5", "difficulty": {"id": "normal", "name": "노말"}, "members": [4, 3, 2, 1]},
-          {"id": "6", "difficulty": {"id": "normal", "name": "노말"}, "members": [11, 22, 33, 44]}
-        ],
-        "아브렐슈드": [
-          {
-            "id": "7",
-            "difficulty": {"id": {"id": "normal", "name": "노말"}, "name": "노말"},
-            "members": [1, 2, 3, 4, 5, 6]
-          },
-          {"id": "8", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 32]},
-          {"id": "9", "difficulty": {"id": "normal", "name": "노말"}, "members": [13]},
-          {"id": "10", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 3, 4, 5, 6]},
-          {"id": "11", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 32]},
-          {"id": "12", "difficulty": {"id": "hard", "name": "하드"}, "members": [13, 2, 3, 54, 6, 6]}
-        ],
-        "일리아칸": [
-          {"id": "13", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 3, 4, 5, 6]},
-          {"id": "14", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 32]},
-          {"id": "15", "difficulty": {"id": "normal", "name": "노말"}, "members": [13]},
-          {"id": "16", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 3, 4, 5, 6]},
-          {"id": "17", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 32]},
-          {"id": "18", "difficulty": {"id": "hard", "name": "하드"}, "members": [13]}
-        ]
-      }
-    };
+      bossList: [],
+      raidList: {},
+      raidResultData: this.raidSelectApi()
+    }
   },
   methods: {
     OpenUpdateModal() {
-      this.isModalViewed = true;
+      if ($('#UpdateBtn').hasClass('btn-disable')) {
+        return false;
+      } else {
+        this.isModalViewed = true;
+      }
     },
     raidUpdateSelected(id, type, difficulty, members) {
       this.selectedId = id;
       this.raidUpdateData.raidId = id;
-      this.raidUpdateData.raidType = type;
-      this.raidUpdateData.raidDifficulty = difficulty === Object ? "" : difficulty;
+      this.raidUpdateData.raidType = type.substring(0, type.indexOf('-') === -1 ? type.length : type.indexOf('-'));
+      this.raidUpdateData.raidDifficulty = difficulty;
       this.raidUpdateData.raidMembers = members;
 
       if (this.selectedId) {
@@ -190,17 +130,58 @@ export default {
     },
     // raidType 변경시 특정 타입일 경우 데이터 초기화
     typeChange(event) {
-      if (event.target.value == "도비스도디언") {
-        this.raidInsertData.raidDifficulty = "";
+      var val = event.target.value;
+      var maxMember = this.raidList[val].maxMember;
+      if (maxMember == 4) {
         this.raidInsertData.raidMembers = this.raidInsertData.raidMembers.slice(0, 4);
+      } else if (maxMember == 8) {
+        this.raidInsertData.raidMembers = this.raidInsertData.raidMembers.slice(0, 8);
       }
+      this.raidInsertData.raidDifficulty = "none";
+    },
+    bossSelectApi() {
+      var result1 = {};
+      var result2 = [];
+      $.ajax({
+        url: '/api/bosses/select',
+        type: 'GET',
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+          console.log('********result-start********')
+          console.log('bosses1 : ' + data.data1.toString());
+          console.log('bosses2 : ' + data.data2.toString());
+          console.log('********result-end********')
+          result1 = data.data1;
+          result2 = data.data2;
+        },
+      });
+      this.raidList = result1;
+      this.bossList = result2;
+    },
+    raidSelectApi() {
+      var result = {};
+      $.ajax({
+        url: '/api/raids/select',
+        type: 'GET',
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+          console.log('********result-start********')
+          console.log('raids : ' + data.data.toString());
+          console.log('********result-end********')
+          result = data.data;
+        },
+      });
+      this.raidResultData = result;
+      return result;
     },
     // 추가 버튼 클릭시 API호출 함수
     raidInsertApi() {
       // Invalid Check
       function invalidRaidData(data) {
         // 난이도가 선택되지 않을 경우(raidType 0인경우는 제외)
-        if (data.raidDifficulty == "" && data.raidType != "도비스도디언") {
+        if (data.raidDifficulty == "none" && data.raidType != "도비스도디언") {
           alert("난이도를 선택해 주세요.");
           return false;
         }
@@ -220,34 +201,52 @@ export default {
 
       // RaidInsert API 호출
       if (invalidRaidData(this.raidInsertData)) {
-        alert("등록되었습니다.");
         $.ajax({
-            url: "http://localhost:8081/api/raid/insert",
-            type: "POST",
-            data: this.raidInsertData,
-            success: function (data) {
-              console.log(data);
-            },
-          }
-        );
+          url: "/api/raids/insert",
+          type: "POST",
+          data: JSON.stringify(this.raidInsertData),
+          contentType: "application/json",
+          async: false,
+          success: function (data) {
+            alert("등록되었습니다.");
+          },
+        });
+        this.raidSelectApi();
+        // 레이드 타입, 난이도, 공격대원
+        this.raidInsertData = {
+          raidType: "도비스도디언",
+          raidDifficulty: "none",
+          raidMembers: []
+        }
       }
     },
     raidDeleteApi() {
-      // RaidDelete API 호출
-      $.ajax({
-        url: "http://localhost:8081/api/raid/delete",
-        type: "POST",
-        data: this.raidDeleteData,
-        success: function (data) {
-          console.log(data);
-        },
-      });
+      if ($('#DeleteBtn').hasClass('btn-disable') == false && confirm("삭제하시겠습니까?")) {
+        $.ajax({
+          url: "/api/raids/delete",
+          type: "POST",
+          data: JSON.stringify({"deleteRaidId": this.raidDeleteData}),
+          contentType: "application/json",
+          async: false,
+          success: function () {
+            alert("삭제되었습니다.");
+          },
+        });
+        this.raidSelectApi();
+        this.raidUpdateData = {
+          raidId: "",
+            raidType: "",
+            raidDifficulty: "",
+            raidMembers: []
+        }
+        this.selectedId = undefined;
+      }
     },
     /*    // Charter조회 API호출
         charterApi(event) {
           console.log(event.target)
           $.ajax({
-              url: "http://localhost:8081/api/loa/charter",
+              url: "/api/loa/charter",
               type: "POST",
               data: {member: this.raidInsertData.raidMembers[event.target.id - 1]},
               success: function (data) {

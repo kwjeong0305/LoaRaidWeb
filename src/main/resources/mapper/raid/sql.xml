@@ -3,40 +3,67 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.asacoa.loaraidweb.mapper.RaidMapper">
+    <select id="selectAllBosses" parameterType="String" resultType="com.asacoa.loaraidweb.data.BossDto">
+        <![CDATA[
+        select boss_name                     as bossName,
+               group_concat(boss_difficulty ORDER BY boss_order) as bossDifficulty,
+               boss_max_member               as bossMaxMember
+        from boss
+        where boss_used_yn = '1'
+        group by boss_name, boss_max_member
+        order by boss_order
+        ]]>
+    </select>
+
+    <select id="selectBossesByRaid" parameterType="String" resultType="com.asacoa.loaraidweb.data.RaidDto">
+        <![CDATA[
+        select distinct t2.boss_name       as bossName,
+                        t2.boss_difficulty as bossDifficulty
+        from raid t1,
+             boss t2
+        where t1.raid_type = t2.boss_name
+          and t1.raid_difficulty = t2.boss_difficulty
+          and t2.boss_used_yn = '1'
+        order by boss_order, t1.raid_id
+        ]]>
+    </select>
+
     <select id="selectAllRaids" parameterType="String" resultType="com.asacoa.loaraidweb.data.RaidDto">
         <![CDATA[
-        SELECT raid_id,
-               guild_id,
-               raid_type,
-               raid_members
-        FROM raid
+        select t1.raid_id         as raidId,
+               t2.boss_name       as raidType,
+               t2.boss_difficulty as raidDifficulty,
+               t1.raid_members    as raidMember
+        from raid t1,
+             boss t2
+        where t1.raid_type = t2.boss_name
+          and t1.raid_difficulty = t2.boss_difficulty
+        order by boss_order, raid_id
         ]]>
-        <where>
-            guild_id = #{guildId}
-        </where>
     </select>
 
     <insert id="insertRaid" parameterType="String">
     <![CDATA[
-        INSERT INTO raid
-            (raid_id, guild_id, raid_type, raid_members)
-        VALUES (#{raidId}, #{guildId}, #{raidType}, #{raidMembers})
+        insert into raid (raid_reg_date, raid_type, raid_difficulty, raid_members)
+        values (date_format(now(), '%Y%m%d%H%i%s'), #{raidType}, #{raidDifficulty}, #{raidMember})
         ]]>
     </insert>
 
     <update id="updateRaid" parameterType="String">
     <![CDATA[
-        UPDATE raid
-        SET raid_members = #{raidMembers}
-        WHERE raid_id = #{raidId}
+        update raid
+        set raid_type       = #{raidType},
+            raid_difficulty = #{raidDifficulty},
+            raid_members    = #{raidMember}
+        where raid_id = #{raidId}
         ]]>
     </update>
 
     <delete id="deleteRaid" parameterType="String">
     <![CDATA[
-        DELETE
-        FROM raid
-        WHERE raid_id = #{raidId}
+        delete
+        from raid
+        where raid_id = #{raidId}
         ]]>
     </delete>
 </mapper>

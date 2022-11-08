@@ -40,7 +40,7 @@ dependencies {
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'org.json', name: 'json', version: '20220320'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.0'
 }
 
 /**
@@ -67,7 +67,7 @@ node {
      * version에 명시한 버전으로 Node.js 다운로드 및 설치
      * workDir에 설치됨
      */
-    version = "16.17.1"
+    version = "18.12.1"
 
     /**
      * 사용할 npm 버전을 지정하면 npmWorkDir에 설치됨
