@@ -6,6 +6,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api")
 public class RaidApiController {
@@ -14,20 +17,24 @@ public class RaidApiController {
     private RaidService raidService;
 
     // 모든 레이드파티 조회
-    @GetMapping("/raid/guild/{guildId}")
+    @GetMapping("/raid/select")
     @ResponseBody
-    public String getGuildAllRaids(@PathVariable Long guildId) throws Exception {
-        return raidService.getAllRaids(guildId).toString();
+    public String getGuildAllRaids() throws Exception {
+        return raidService.getAllRaids().toString();
     }
 
     @PostMapping("/raid/insert")
     @ResponseBody
     public JSONObject createRaid(@RequestBody final RaidDto raidDto) throws Exception {
+        // raid Data 수정
+        raidDto.setRaidId(String.valueOf(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE));
+        raidDto.setRaidMember(Arrays.toString(raidDto.getRaidMembers()));
+
         raidService.createRaid(raidDto);
         return new JSONObject();
     }
 
-    @PutMapping("/raid/update")
+    @PostMapping("/raid/update")
     @ResponseBody
     public JSONObject saveRaid(@RequestBody final RaidDto raidDto) throws Exception {
 
@@ -36,7 +43,7 @@ public class RaidApiController {
         return new JSONObject();
     }
 
-    @DeleteMapping("/raid/delete")
+    @PostMapping("/raid/delete")
     @ResponseBody
     public JSONObject deleteRaid(@RequestBody final RaidDto raidDto) throws Exception {
 

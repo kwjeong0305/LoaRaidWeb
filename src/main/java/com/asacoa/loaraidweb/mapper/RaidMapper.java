@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 @Repository
 public interface RaidMapper {
-    public List<RaidDto> selectAllRaids(Long guildId) throws Exception;
+    public List<RaidDto> selectAllRaids() throws Exception;
 
     public int insertRaid(RaidDto raidDto) throws Exception;
 

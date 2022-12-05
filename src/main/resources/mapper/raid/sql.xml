@@ -5,22 +5,19 @@
 <mapper namespace="com.asacoa.loaraidweb.mapper.RaidMapper">
     <select id="selectAllRaids" parameterType="String" resultType="com.asacoa.loaraidweb.data.RaidDto">
         <![CDATA[
-        SELECT raid_id,
-               guild_id,
-               raid_type,
-               raid_members
+        SELECT raid_id as raidId,
+               raid_type as raidType,
+               raid_difficulty as raidDifficulty,
+               raid_members as raidMember
         FROM raid
         ]]>
-        <where>
-            guild_id = #{guildId}
-        </where>
     </select>
 
     <insert id="insertRaid" parameterType="String">
     <![CDATA[
         INSERT INTO raid
-            (raid_id, guild_id, raid_reg_date,raid_type, raid_difficulty,raid_members)
-        VALUES (#{raidId}, #{guildId}, DATE_FORMAT(now(), '%Y%m%d%H%i%s'),#{raidType}, #{raidDifficulty}, #{raidMembers})
+            (raid_id, raid_reg_date,raid_type, raid_difficulty,raid_members)
+        VALUES (#{raidId}, DATE_FORMAT(now(), '%Y%m%d%H%i%s'),#{raidType}, #{raidDifficulty}, #{raidMember})
         ]]>
     </insert>
 

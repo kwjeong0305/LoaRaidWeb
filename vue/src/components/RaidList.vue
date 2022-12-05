@@ -51,12 +51,24 @@
 <script>
 import Modal from "./Modal";
 import UpdateRaid from "./UpdateRaid";
+import Vue from "vue";
 
 export default {
   name: 'RaidList',
   components: {
     Modal,
     UpdateRaid
+  },
+  mounted() {
+    $.ajax({
+      url: 'http://localhost:8088/api/raid/select',
+      type: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        console.log(data.data)
+        raidData = data.data
+      }
+    })
   },
   data() {
     return {
@@ -98,7 +110,6 @@ export default {
             {"id": "hard3", "name": "하드3"}
           ]
         }
-
       },
       // 레이드 타입, 난이도, 공격대원
       raidInsertData: {
@@ -115,48 +126,16 @@ export default {
       },
       // 레이드 ID 삭제전용
       raidDeleteData: [],
-      // 레이드 타입, 난이도, 공격대원
-      raidResultData: {
-        "도비스도디언": [
-          {
-            "id": "1",
-            "difficulty": {"id": '', "name": ''},
-            "members": ["가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타", "가나다라마바사아자차카타"]
-          },
-          {"id": "2", "difficulty": {"id": '', "name": ''}, "members": [1, 2, 3, 4]},
-          {"id": "3", "difficulty": {"id": '', "name": ''}, "members": [4, 3, 2, 1]}
-        ],
-        "쿠크세이튼": [
-          {"id": "4", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 3, 4]},
-          {"id": "5", "difficulty": {"id": "normal", "name": "노말"}, "members": [4, 3, 2, 1]},
-          {"id": "6", "difficulty": {"id": "normal", "name": "노말"}, "members": [11, 22, 33, 44]}
-        ],
-        "아브렐슈드": [
-          {
-            "id": "7",
-            "difficulty": {"id": {"id": "normal", "name": "노말"}, "name": "노말"},
-            "members": [1, 2, 3, 4, 5, 6]
-          },
-          {"id": "8", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 32]},
-          {"id": "9", "difficulty": {"id": "normal", "name": "노말"}, "members": [13]},
-          {"id": "10", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 3, 4, 5, 6]},
-          {"id": "11", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 32]},
-          {"id": "12", "difficulty": {"id": "hard", "name": "하드"}, "members": [13, 2, 3, 54, 6, 6]}
-        ],
-        "일리아칸": [
-          {"id": "13", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 3, 4, 5, 6]},
-          {"id": "14", "difficulty": {"id": "normal", "name": "노말"}, "members": [1, 2, 32]},
-          {"id": "15", "difficulty": {"id": "normal", "name": "노말"}, "members": [13]},
-          {"id": "16", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 3, 4, 5, 6]},
-          {"id": "17", "difficulty": {"id": "hard", "name": "하드"}, "members": [1, 2, 32]},
-          {"id": "18", "difficulty": {"id": "hard", "name": "하드"}, "members": [13]}
-        ]
-      }
-    };
+      raidResultData: {}
+    }
   },
   methods: {
     OpenUpdateModal() {
-      this.isModalViewed = true;
+      if ($('#UpdateBtn').hasClass('btn-disable')) {
+        return false;
+      } else {
+        this.isModalViewed = true;
+      }
     },
     raidUpdateSelected(id, type, difficulty, members) {
       this.selectedId = id;
@@ -197,6 +176,8 @@ export default {
     },
     // 추가 버튼 클릭시 API호출 함수
     raidInsertApi() {
+      console.log(JSON.stringify(this.raidInsertData));
+
       // Invalid Check
       function invalidRaidData(data) {
         // 난이도가 선택되지 않을 경우(raidType 0인경우는 제외)
@@ -224,7 +205,8 @@ export default {
         $.ajax({
             url: "/api/raid/insert",
             type: "POST",
-            data: this.raidInsertData,
+            data: JSON.stringify(this.raidInsertData),
+            contentType: "application/json",
             success: function (data) {
               console.log(data);
             },
@@ -233,15 +215,19 @@ export default {
       }
     },
     raidDeleteApi() {
-      // RaidDelete API 호출
-      $.ajax({
-        url: "/api/raid/delete",
-        type: "POST",
-        data: this.raidDeleteData,
-        success: function (data) {
-          console.log(data);
-        },
-      });
+      if ($('#DeleteBtn').hasClass('btn-disable') == false && confirm("삭제하시겠습니까?")) {
+        alert("삭제되었습니다.");
+        $.ajax({
+            url: "/api/raid/delete",
+            type: "POST",
+            data: JSON.stringify(this.raidDeleteData),
+            contentType: "application/json",
+            success: function (data) {
+              console.log(data);
+            },
+          }
+        );
+      }
     },
     /*    // Charter조회 API호출
         charterApi(event) {
