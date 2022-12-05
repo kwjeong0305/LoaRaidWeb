@@ -37,7 +37,7 @@ public class RaidApiController {
     @PostMapping("/raid/update")
     @ResponseBody
     public JSONObject saveRaid(@RequestBody final RaidDto raidDto) throws Exception {
-
+        raidDto.setRaidMember(Arrays.toString(raidDto.getRaidMembers()));
         raidService.saveRaid(raidDto);
 
         return new JSONObject();
@@ -46,7 +46,6 @@ public class RaidApiController {
     @PostMapping("/raid/delete")
     @ResponseBody
     public JSONObject deleteRaid(@RequestBody final RaidDto raidDto) throws Exception {
-
         raidService.deleteRaid(raidDto);
 
         return new JSONObject();

@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       // 레이드 ID, 레이드 타입, 난이도, 공격대원
-      raidUpdateData: this.copyObject(this.raidData)
+      raidUpdateData: this.copyObject(this.raidData),
     }
   },
   methods: {
@@ -43,17 +43,20 @@ export default {
     },
     raidUpdateApi() {
       $.ajax({
-        url: "/api/raid/update",
+        url: "http://localhost:8088/api/raid/update",
         type: "POST",
         data: JSON.stringify(this.raidUpdateData),
+        async: true,
         contentType: "application/json",
         success: function (data) {
-          console.log(data);
+          alert("수정되었습니다.");
         },
         error: function (data) {
-          console.log(data);
+          alert("에러가 발생했습니다.\n디스코드 CocoA#3316 으로 문의해주세요.");
         }
       });
+      this.$parent.$emit('isModalViewed', false);
+      this.$emit('raidResultData', this.$parent.raidSelectApi());
     },    // raidType 변경시 특정 타입일 경우 raidAddSendData 데이터 초기화
     typeChange(event) {
       if (event.target.value == "도비스도디언") {

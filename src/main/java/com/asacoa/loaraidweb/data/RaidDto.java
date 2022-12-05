@@ -11,6 +11,7 @@ import java.util.List;
 @Setter
 public class RaidDto {
     private String raidId;
+    private String[] deleteRaidId;
     private String raidType;
     private String raidDifficulty;
     private String raidMember;

@@ -26,7 +26,7 @@
         UPDATE raid
         SET raid_type = #{raidType},
             raid_difficulty = #{raidDifficulty},
-            raid_members = #{raidMembers}
+            raid_members = #{raidMember}
         WHERE raid_id = #{raidId}
         ]]>
     </update>

@@ -1,13 +1,14 @@
 <template>
   <div id="RaidList" class="scroll">
     <Modal v-if="isModalViewed" @closeModal="isModalViewed = false">
-      <UpdateRaid :raidData="raidUpdateData" :raidList="raidList"/>
+      <UpdateRaid :raidData="raidUpdateData" :raidList="raidList" :is-modal-viewed="isModalViewed"/>
     </Modal>
     <div class="div-containerCard raid-add">
       <div class="div-containerItem raid-add-type raid-add-btn">
         <select @change="typeChange" v-model="raidInsertData.raidType">
           <option v-for="id in Object.keys(raidList)" :value="id">{{ id }}</option>
         </select>
+        <button class="btn-positive">test</button>
         <button class="btn-positive" @click="raidInsertApi">추가</button>
       </div>
       <div class="div-containerItem raid-add-difficulty" v-if="raidInsertData.raidType != ''">
@@ -59,18 +60,11 @@ export default {
     Modal,
     UpdateRaid
   },
-  mounted() {
-    $.ajax({
-      url: 'http://localhost:8088/api/raid/select',
-      type: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        console.log(data.data)
-        raidData = data.data
-      }
-    })
-  },
   data() {
+
+    var result = {};
+
+    console.log(result);
     return {
       selectedId: undefined,
       isModalViewed: false,
@@ -126,7 +120,7 @@ export default {
       },
       // 레이드 ID 삭제전용
       raidDeleteData: [],
-      raidResultData: {}
+      raidResultData: this.raidSelectApi()
     }
   },
   methods: {
@@ -174,6 +168,20 @@ export default {
         this.raidInsertData.raidMembers = this.raidInsertData.raidMembers.slice(0, 4);
       }
     },
+    raidSelectApi() {
+      var result = {};
+      $.ajax({
+        url: 'http://localhost:8088/api/raid/select',
+        type: 'GET',
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+          console.log(data.data);
+          result = data.data;
+        },
+      });
+      return result;
+    },
     // 추가 버튼 클릭시 API호출 함수
     raidInsertApi() {
       console.log(JSON.stringify(this.raidInsertData));
@@ -201,14 +209,15 @@ export default {
 
       // RaidInsert API 호출
       if (invalidRaidData(this.raidInsertData)) {
-        alert("등록되었습니다.");
         $.ajax({
-            url: "/api/raid/insert",
+            url: "http://localhost:8088/api/raid/insert",
             type: "POST",
             data: JSON.stringify(this.raidInsertData),
             contentType: "application/json",
             success: function (data) {
+              alert("등록되었습니다.");
               console.log(data);
+              this.raidSelectApi();
             },
           }
         );
@@ -216,14 +225,15 @@ export default {
     },
     raidDeleteApi() {
       if ($('#DeleteBtn').hasClass('btn-disable') == false && confirm("삭제하시겠습니까?")) {
-        alert("삭제되었습니다.");
         $.ajax({
-            url: "/api/raid/delete",
+            url: "http://localhost:8088/api/raid/delete",
             type: "POST",
-            data: JSON.stringify(this.raidDeleteData),
-            contentType: "application/json",
+            data: this.raidDeleteData,
+            contentType: "application/array",
             success: function (data) {
               console.log(data);
+              alert("삭제되었습니다.");
+              this.raidSelectApi();
             },
           }
         );

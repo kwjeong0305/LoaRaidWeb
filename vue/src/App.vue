@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" @load="raidResultData={'test' : 'test1'}">
     <header class="navbar">
       <div class="nav-container">
         <div class="label-home-01 header-item">
@@ -7,7 +7,8 @@
         </div>
       </div>
     </header>
-    <router-view/>
+    <router-view>
+    </router-view>
     <!--    <header class="navbar">
           <div class="nav-container">
             <div class="label-home-01 header-item">
