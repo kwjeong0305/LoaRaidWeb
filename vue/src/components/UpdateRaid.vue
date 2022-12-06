@@ -1,12 +1,12 @@
 <template>
   <div class="div-containerCard raid-add">
     <div class="div-containerItem raid-add-type raid-add-btn">
-      <select v-model="raidUpdateData.raidType">
+      <select v-model="raidUpdateData.raidType" @change="typeChange">
         <option v-for="id in Object.keys(raidList)" :value="id">{{ id }}</option>
       </select>
       <button class="btn-positive" @click="raidUpdateApi">수정</button>
     </div>
-    <div class="div-containerItem raid-add-difficulty" v-if="raidUpdateData.raidType !== ''">
+    <div class="div-containerItem raid-add-difficulty" v-if="raidUpdateData.raidType !== '도비스도디언'">
       <label class="label-raid-add" v-for="item in raidList[raidUpdateData.raidType].difficulty">
         <input id="" class="input-radio input-radio-difficulty" type="radio" name="difficulty"
                :value="item.id"
@@ -43,25 +43,32 @@ export default {
     },
     raidUpdateApi() {
       $.ajax({
-        url: "http://localhost:8088/api/raid/update",
+        url: "/api/raid/update",
         type: "POST",
         data: JSON.stringify(this.raidUpdateData),
-        async: true,
+        async: false,
         contentType: "application/json",
         success: function (data) {
           alert("수정되었습니다.");
         },
         error: function (data) {
-          alert("에러가 발생했습니다.\n디스코드 CocoA#3316 으로 문의해주세요.");
+          alert("에러가 발생했습니다.");
         }
       });
-      this.$parent.$emit('isModalViewed', false);
-      this.$emit('raidResultData', this.$parent.raidSelectApi());
+      this.$parent.$emit('closeModal');
+      this.$parent.$parent.raidSelectApi(this);
+      this.$parent.$parent.raidUpdateData = this.copyObject(this.raidUpdateData);
     },    // raidType 변경시 특정 타입일 경우 raidAddSendData 데이터 초기화
     typeChange(event) {
+      var maxMember = this.raidList[event.target.value].maxMember;
+      if (maxMember == 4) {
+        this.raidUpdateData.raidMembers.slice(0, 4);
+      } else if (maxMember == 8) {
+        this.raidUpdateData.raidMembers.slice(0, 8);
+      }
+
       if (event.target.value == "도비스도디언") {
-        this.raidUpdateData.raidDifficulty = "";
-        this.raidUpdateData.raidMembers = this.raidUpdateData.raidMembers.slice(0, 4);
+        this.raidUpdateData.raidDifficulty = "none";
       }
     }
     /*    charterApi() {
